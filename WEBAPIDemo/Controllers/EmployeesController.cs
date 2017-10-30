@@ -57,5 +57,64 @@ namespace WEBAPIDemo.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest,ex);
             }
         }
+
+
+        public HttpResponseMessage Delete(int id)
+        {
+            try
+            {
+                using (WEBAPIDemoDbEntities entities = new WEBAPIDemoDbEntities())
+                {
+                    var entity = entities.Employees.FirstOrDefault(e => e.ID == id);
+
+                    if (entity != null)
+                    {
+                        entities.Employees.Remove(entity);
+                        entities.SaveChanges();
+                        return Request.CreateResponse(HttpStatusCode.OK);
+                    }
+                    else
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Employee with Id:" + id.ToString() + "Not Found");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+
+        }
+
+        public HttpResponseMessage Put(int id,[FromBody]Employee e)
+        {
+            try
+            {
+                using (WEBAPIDemoDbEntities entities = new WEBAPIDemoDbEntities())
+                {
+                    var entity = entities.Employees.FirstOrDefault(emp => emp.ID == id);
+
+                    if (entity != null)
+                    {
+                        entity.FirstName = e.FirstName;
+                        entity.LastName = e.LastName;
+                        entity.Salary = e.Salary;
+                        entity.Gender = e.Gender;
+                        entities.SaveChanges();
+                        var Message = Request.CreateResponse(HttpStatusCode.OK, e);
+                        Message.Headers.Location = new Uri(Request.RequestUri.ToString());
+                        return Message;
+                    }
+                    else
+                    {
+                        return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Employee with Id:" + id.ToString() + " cannot be modified(May be not found )");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex.Message);
+            }
+        }
     }
 }
