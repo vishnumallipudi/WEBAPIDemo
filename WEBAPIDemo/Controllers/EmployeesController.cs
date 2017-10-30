@@ -1,6 +1,5 @@
 ﻿using EmployeeDataAccess;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -9,16 +8,29 @@ namespace WEBAPIDemo.Controllers
 {
     public class EmployeesController : ApiController
     {
-        public IEnumerable<Employee> Get()
+        [HttpGet]
+        public HttpResponseMessage LoadAllEMployees(string gender="All")
         {
             using (WEBAPIDemoDbEntities entities=new WEBAPIDemoDbEntities())
             {
-                return entities.Employees.ToList();
+
+                switch (gender.ToLower())
+                {
+                    case "All":
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.ToList());
+                    case "male":
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e=>e.Gender.ToLower()=="male").ToList());
+                    case "female":
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e => e.Gender.ToLower() == "female").ToList());
+                    default:
+                        return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Gender Value must be All,male, female");
+                        
+                }                
 
             }
         }
-
-        public HttpResponseMessage Get(int id)
+        [HttpGet]
+        public HttpResponseMessage LoadEmployeeById(int id)
         {
             using (WEBAPIDemoDbEntities entities = new WEBAPIDemoDbEntities())
             {
