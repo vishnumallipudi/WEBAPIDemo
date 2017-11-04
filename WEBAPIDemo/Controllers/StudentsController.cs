@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using WEBAPIDemo.Models;
 
@@ -37,17 +39,25 @@ namespace WEBAPIDemo.Controllers
         {
             return teacherList;
         }
-        [Route("{id:int}")]
-        public IEnumerable<student> Get(int id)
-        {
-            var result= studentList.Where(s=>s.Id==id);
-            return result;
-        }
+        
         [Route("{name:alpha}")]
         public IEnumerable<student> Get(string name)
         {
             var result = studentList.Where(s => s.Name == name);
             return result;
+        }
+        [Route("{id:int}",Name ="getstudentbyId")]
+        public IEnumerable<student> Get(int id)
+        {
+            var result = studentList.Where(s => s.Id == id);
+            return result;
+        }
+        public HttpResponseMessage Post(student stud)
+        {
+            studentList.Add(stud);
+            var response=Request.CreateResponse(HttpStatusCode.Created);
+            response.Headers.Location = new Uri(Url.Link("getstudentbyId",new { id=stud.Id}));
+            return response;
         }
 
         [Route("{id}/courses")]
