@@ -37,10 +37,16 @@ namespace WEBAPIDemo.Controllers
         {
             return teacherList;
         }
-        [Route("{id}")]
+        [Route("{id:int}")]
         public IEnumerable<student> Get(int id)
         {
             var result= studentList.Where(s=>s.Id==id);
+            return result;
+        }
+        [Route("{name:alpha}")]
+        public IEnumerable<student> Get(string name)
+        {
+            var result = studentList.Where(s => s.Name == name);
             return result;
         }
 
