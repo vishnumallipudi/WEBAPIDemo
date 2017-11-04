@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script><script type="text/javascript">
+	$(document).ready(function () {
+		//alert("Jquery is working fine");
+		$("#getEmps").on("click", function () {
+			myfun();
+		}); ClearEmps
+		$("#ClearEmps").on("click", function () {
+			$('#emptable').empty();
+		});
+
+		function myfun() {
+			$.ajax({
+				type: 'Get',
+				url: 'http://localhost:56968/api/employees?gender=all',
+				dataType: 'json'
+			}).done(function (data) {
+				var table = $("#emptable");
+				$.each(data, function (index, val) {
+					table.append("<tr>");
+					//console.log(index + "--" + val.firstName);
+					table.append("<td>" + val.firstName + "</td>");
+					table.append("<td>" + val.lastName + "</td>");
+					table.append("<td>" + val.gender + "</td>");
+					table.append("<td>" + val.salary + "</td>");
+					table.append("</tr>");
+
+				})
+			});
+		}
+
+
+	});
+	</script>
+</head>
+<body>
+	<input type="button" value="Get All Employees" id="getEmps" />
+	<input type="button" value="Clear" id="ClearEmps" />
+	<div>
+
+		<table id="emptable"></table>
+	</div>
+</body>
+</html>

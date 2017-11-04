@@ -4,19 +4,26 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
+
 namespace WEBAPIDemo.Controllers
 {
+    [EnableCorsAttribute("*", "*", "*")]
     public class EmployeesController : ApiController
     {
         [HttpGet]
-        public HttpResponseMessage LoadAllEMployees(string gender="All")
+        [DisableCors]
+        [Authorize(Users ="vishnu@domain.com")]
+        public HttpResponseMessage LoadAllEMployees([FromUri]string gender="All")
         {
             using (WEBAPIDemoDbEntities entities=new WEBAPIDemoDbEntities())
             {
 
                 switch (gender.ToLower())
                 {
-                    case "All":
+                    case "all":
+                        return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.ToList());
+                    case null:
                         return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.ToList());
                     case "male":
                         return Request.CreateResponse(HttpStatusCode.OK, entities.Employees.Where(e=>e.Gender.ToLower()=="male").ToList());
